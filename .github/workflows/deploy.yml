@@ -7,7 +7,7 @@ on:
   push:
     tags:
       - '**'
-  workflow_dispatch: # Allows you to click "Run workflow" manually!
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -36,11 +36,12 @@ jobs:
         run: |
           Get-ChildItem -Path out/make/squirrel.windows/*/*.exe | Rename-Item -NewName { $_.BaseName + "-x64" + $_.Extension }
           
+      # --- THIS IS THE CHANGE ---
+      # We now only upload the final Setup.exe file, skipping all heavy extra packages.
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: kando-windows-x64
+          name: kando-setup-x64
           path: |
-            out/make/zip/win32/*/*
-            out/make/squirrel.windows/*/*.exe
+            out/make/squirrel.windows/*/*-x64.exe
           retention-days: 7
